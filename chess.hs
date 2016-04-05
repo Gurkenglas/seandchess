@@ -150,7 +150,7 @@ bestMoveBy :: Evaluator -> Side -> Board -> Move
 bestMoveBy eval s b = maximumBy (comparing $ eval s . uncurry (move b)) $ getMoves b s
 
 evaluateBoard :: Evaluator
-evaluateBoard = evalRecursive 2 -- any more than three takes forever
+evaluateBoard = iterate evalPredictive evalMaterial !! 2 -- any more than three takes forever
 
 evalSimple s b = fromIntegral . length $ getSide b s 
 
@@ -161,11 +161,7 @@ evalMaterial s b =
   where 
     sign me it = if it==me then 1 else (-1)
 
-evalRecursive 0 s b = evalMaterial s b
-evalRecursive n s b = 
-  evalRecursive (n-1) s $ 
-  uncurry (move b) $
-    bestMoveBy (evalRecursive $ n-1) s b 
+evalPredictive e s b = e s $ uncurry (move b) $ bestMoveBy e s b 
 
 
 -- Misc

@@ -3,6 +3,7 @@ import Data.Array
 import Data.Maybe
 import Data.List
 import Data.Ord
+import Control.Monad.Loops
 
 type Pos = (Int, Int) 
 data PieceType = P | N | B | R | Q | K deriving (Show, Read, Eq, Ord)
@@ -13,7 +14,7 @@ type Move = (Piece, Pos)
 
 main = do
   putStrLn "Let's play a game"
-  humanMove White startBoard
+  iterateM (humanMove White >=> aiMove Black) startBoard
 
 humanMove s b = do
   printBoard b
@@ -21,12 +22,11 @@ humanMove s b = do
   let moves = getMoves b s
   mapM_ putStrLn [show n++". "++ agnMove (moves !! n) |n<-[0..length moves-1]]
   moveNumber <- getLine
-  let newBoard = (uncurry $ move b) (moves !! read moveNumber)
-  aiMove (other s) newBoard 
+  return $ uncurry (move b) (moves !! read moveNumber)
 
 aiMove s b = do
   putStrLn $ "\n Computer plays " ++ agnMove bestMove ++ ".\n"
-  humanMove (other s) $ uncurry (move b) bestMove
+  return $ uncurry (move b) bestMove
   where
     bestMove = bestMoveBy evaluateBoard s b 
 
@@ -172,9 +172,6 @@ evalRecursive n s b =
 
 
 -- Misc
-
-other White = Black
-other Black = White
 
 value :: PieceType -> Int
 value t =   case t of

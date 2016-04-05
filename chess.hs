@@ -39,10 +39,7 @@ setup =
 
 startBoard = boardUpdate blankBoard setup
 
---instance Read Pos where
 readPos [file,rank] = (ord file - 96, digitToInt rank)
-
---instance Show Pos where
 showPos ((x,y)) = [chr (x+96), intToDigit y]
 
 agnMove (Piece _ t _, pos) = (if t==P then "" else show t) ++ showPos pos

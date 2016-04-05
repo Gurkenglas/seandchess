@@ -3,6 +3,7 @@ import Data.Array
 import Data.Maybe
 import Data.List
 import Data.Ord
+import Contorl.Monad
 import Control.Monad.Loops
 
 type Pos = (Int, Int) 
@@ -20,7 +21,7 @@ humanMove s b = do
   printBoard b
   putStrLn $ show s ++ " to move."
   let moves = getMoves b s
-  mapM_ putStrLn [show n++". "++ agnMove move | move <- moves]
+  zipWithM_ (\n move -> show n ++ ". " ++ agnMove move) [0..] moves
   moveNumber <- getLine
   return $ uncurry (move b) (moves !! read moveNumber)
 

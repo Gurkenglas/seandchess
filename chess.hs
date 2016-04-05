@@ -14,7 +14,7 @@ type Move = (Piece, Pos)
 
 main = do
   putStrLn "Let's play a game"
-  iterateM (humanMove White >=> aiMove Black) startBoard
+  iterateM_ (humanMove White >=> aiMove Black) startBoard
 
 humanMove s b = do
   printBoard b
